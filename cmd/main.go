@@ -29,6 +29,7 @@ func run(ctx context.Context) error {
 	router := gin.New()
 	router.Use(sloggin.New(logger))
 	router.Static("/static", "web/static")
+	router.LoadHTMLGlob("web/html/*")
 
 	router.GET("/", index.New().Handle)
 
