@@ -11,7 +11,6 @@ import (
 	"github.com/pzapasnik/email-sender/internal/handler/index"
 	renderer "github.com/pzapasnik/email-sender/internal/renderer/templ"
 	sloggin "github.com/samber/slog-gin"
-	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -30,7 +29,7 @@ func run(ctx context.Context) error {
 	router := gin.New()
 	router.Use(sloggin.New(logger))
 
-	router.Static("/static", "web/static")
+	router.Static("/static", "./web/static")
 	router.LoadHTMLGlob("web/templates/*")
 
 	// This is bad. You can't normally set your own renderer in gin
@@ -42,28 +41,17 @@ func run(ctx context.Context) error {
 	router.GET("/html", index.New().Handle)
 	router.GET("/templ", index.New().HandleTempl)
 
-	// router.GET("/templ", func(c *gin.Context) {
-	// 	_ = templates.Index().Render(c.Request.Context(), c.Writer)
-	// })
-
-	err := router.Run(":8080")
-	if err != nil {
-		return err
-	}
-
+	//TODO: add custom server timeouts and other settings
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: router,
 	}
 
-	errgrp, ctx := errgroup.WithContext(ctx)
-
-	errgrp.Go(func() error { return runServer(ctx, server) })
+	//TODO: add errgroup and graceful shutdown
+	err := server.ListenAndServe()
+	if err != nil {
+		panic(err)
+	}
 
 	return nil
-}
-
-func runServer(_ context.Context, server *http.Server) error {
-	//TODO: add graceful shutdown
-	return server.ListenAndServe()
 }
