@@ -29,10 +29,15 @@ func run(ctx context.Context) error {
 
 	router := gin.New()
 	router.Use(sloggin.New(logger))
-	router.HTMLRender = renderer.NewTemplRenderer(router.HTMLRender)
 
 	router.Static("/static", "web/static")
 	router.LoadHTMLGlob("web/templates/*")
+
+	// This is bad. You can't normally set your own renderer in gin
+	// So you have to overwrite it by your self having in mind that
+	// order of setting settings on router matters
+	// It would be nice to have functional options pattern here
+	router.HTMLRender = renderer.NewTemplRenderer(router.HTMLRender)
 
 	router.GET("/html", index.New().Handle)
 	router.GET("/templ", index.New().HandleTempl)
