@@ -29,7 +29,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title></title><link href=\"css/style.css\" rel=\"stylesheet\"></head><body><h1>HELLO WORLD TEMPL</h1></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title></title><script src=\"/static/lib/htmx.min.js\"></script><script src=\"/static/lib/tailwindcss@4.min.js\"></script></head><body><h1 class=\"bg-sky-500 hover:bg-sky-700\">HELLO WORLD TEMPL</h1></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
