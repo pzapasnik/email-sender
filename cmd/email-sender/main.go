@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pzapasnik/email-sender/internal/handler/index"
-	renderer "github.com/pzapasnik/email-sender/internal/renderer/html"
+	renderer "github.com/pzapasnik/email-sender/internal/renderer/templ"
 	sloggin "github.com/samber/slog-gin"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,12 +29,17 @@ func run(ctx context.Context) error {
 
 	router := gin.New()
 	router.Use(sloggin.New(logger))
+	router.HTMLRender = renderer.NewTemplRenderer(router.HTMLRender)
+
 	router.Static("/static", "web/static")
 	router.LoadHTMLGlob("web/templates/*")
-	router.HTMLRender = renderer.NewHTMLRenderer(router.HTMLRender)
 
 	router.GET("/html", index.New().Handle)
 	router.GET("/templ", index.New().HandleTempl)
+
+	// router.GET("/templ", func(c *gin.Context) {
+	// 	_ = templates.Index().Render(c.Request.Context(), c.Writer)
+	// })
 
 	err := router.Run(":8080")
 	if err != nil {

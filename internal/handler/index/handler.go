@@ -1,10 +1,10 @@
 package index
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	renderer "github.com/pzapasnik/email-sender/internal/renderer/html"
 	"github.com/pzapasnik/email-sender/web/templates"
 )
 
@@ -20,6 +20,8 @@ func (h *Handler) Handle(c *gin.Context) {
 }
 
 func (h *Handler) HandleTempl(c *gin.Context) {
-	r := renderer.NewRenderer(c.Request.Context(), http.StatusOK, templates.Index())
-	c.Render(http.StatusOK, r)
+	slog.Info("HandleTempl")
+	c.HTML(http.StatusOK, "index.templ", templates.Index())
+	// r := renderer.NewRenderer(c.Request.Context(), http.StatusOK, templates.Index())
+	// _ = r.Render(c.Writer)
 }

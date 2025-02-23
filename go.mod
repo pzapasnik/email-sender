@@ -3,13 +3,13 @@ module github.com/pzapasnik/email-sender
 go 1.24.0
 
 require (
+	github.com/a-h/templ v0.3.833
 	github.com/gin-gonic/gin v1.10.0
 	github.com/samber/slog-gin v1.14.1
 	golang.org/x/sync v0.11.0
 )
 
 require (
-	github.com/a-h/templ v0.3.833 // indirect
 	github.com/bytedance/sonic v1.12.8 // indirect
 	github.com/bytedance/sonic/loader v0.2.3 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
