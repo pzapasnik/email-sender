@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+	"type": "go",
+	"request": "launch",
+	"name": "email-sender-debug",
+	"program": "cmd/email-sender/main.go",
+	"env": {
+	  "protoc_cmd": "/opt/homebrew/opt/protobuf@3/bin/protoc"
+	},
+	"args": [
+      ]
+    }
+  ]
+}
