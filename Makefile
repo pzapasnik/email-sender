@@ -1,5 +1,8 @@
-run:
-	go run cmd/main.go
+templ:
+	templ generate
 
-build:
+run: templ
+	go run cmd/email-sender/main.go
+
+build: templ
 	go build -o bin/email-sender cmd/email-sender/main.go
