@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/pzapasnik/email-sender/internal/handler/index"
+	"github.com/pzapasnik/email-sender/internal/handler/root"
 	renderer "github.com/pzapasnik/email-sender/internal/renderer/templ"
 	sloggin "github.com/samber/slog-gin"
 )
@@ -38,8 +38,7 @@ func run(ctx context.Context) error {
 	// It would be nice to have functional options pattern here
 	router.HTMLRender = renderer.NewTemplRenderer(router.HTMLRender)
 
-	router.GET("/html", index.New().Handle)
-	router.GET("/templ", index.New().HandleTempl)
+	router.GET("/", root.New().Handle)
 
 	//TODO: add custom server timeouts and other settings
 	server := &http.Server{
