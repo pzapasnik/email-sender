@@ -36,3 +36,6 @@ plan.md
 
 # air
 tmp/
+
+# tailwind markup for LSP
+tailwind.config.js
