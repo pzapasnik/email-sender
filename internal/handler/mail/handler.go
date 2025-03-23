@@ -17,7 +17,7 @@ func NewHandler(mailService service.MailService) *Handler {
 
 func (h *Handler) HandleGetEmailForm() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		t := templates.Root(false)
+		t := templates.Mail(false)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 		if err := t.Render(r.Context(), w); err != nil {
@@ -46,7 +46,7 @@ func (h *Handler) HandlePostEmailSend() func(w http.ResponseWriter, r *http.Requ
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-		t := templates.Root(true)
+		t := templates.Mail(true)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 		if err := t.Render(r.Context(), w); err != nil {
