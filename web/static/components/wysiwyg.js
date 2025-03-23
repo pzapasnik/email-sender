@@ -20,13 +20,13 @@ template.innerHTML = `
     border: 1px solid black;
     border-radius: 4px;
   }
-  .message {
-    height: 100%;
-  }
-  :host {
-    display: block;
-    height: 100%;
-  }
+  /* .message { */
+  /*   height: 100%; */
+  /* } */
+  /* :host { */
+  /*   display: block; */
+  /*   height: 100%; */
+  /* } */
 </style>
 <div class="container">
   <slot name="label"></slot>

@@ -1,9 +1,11 @@
-package email
+package smtp
 
 import (
 	"crypto/tls"
 	"log/slog"
 	"net/smtp"
+
+	"github.com/pzapasnik/email-sender/internal/service"
 )
 
 type Service struct {
@@ -13,11 +15,11 @@ func NewService() *Service {
 	return &Service{}
 }
 
-func (e *Service) Send() error {
+func (e *Service) Send(mail service.MailDTO) error {
 	//SMTP conn
 	tlsConfig := &tls.Config{
 		InsecureSkipVerify: true,
-		ServerName:         "",
+		ServerName:         "server189430.nazwa.pl",
 	}
 
 	// Create connection
@@ -42,9 +44,9 @@ func (e *Service) Send() error {
 	//TODO: add proper credentials as secrets
 	auth := smtp.PlainAuth(
 		"",
-		"", // login
-		"", // pass
-		"", // host
+		"Pawel.zapasnik@visionary-consulting.pl", // login
+		"Pawel@nazwa12",                          // pass
+		"server189430.nazwa.pl",                  // host
 	)
 	if err := smtpClient.Auth(auth); err != nil {
 		slog.Error("Failed to authenticate", "error", err)
@@ -54,14 +56,14 @@ func (e *Service) Send() error {
 	slog.Info("Authenticated")
 
 	// Set the sender and recipient
-	if err := smtpClient.Mail("foo@bar.com"); err != nil {
+	if err := smtpClient.Mail("Pawel.zapasnik@visionary-consulting.pl"); err != nil {
 		slog.Error("Failed to set sender", "error", err)
 		return err
 	}
 
 	slog.Info("Sender set")
 
-	if err := smtpClient.Rcpt("bazz@fazz.com"); err != nil {
+	if err := smtpClient.Rcpt("pzapasnik@gmail.com"); err != nil {
 		slog.Error("Failed to set recipient", "error", err)
 		return err
 	}

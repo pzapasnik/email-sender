@@ -1,19 +1,18 @@
-package email
+package mail
 
 import (
-	"log/slog"
 	"net/http"
 
-	"github.com/pzapasnik/email-sender/internal/service/email"
+	"github.com/pzapasnik/email-sender/internal/service"
 	"github.com/pzapasnik/email-sender/web/templates"
 )
 
 type Handler struct {
-	service *email.Service
+	service service.MailService
 }
 
-func NewHandler(emailService *email.Service) *Handler {
-	return &Handler{service: emailService}
+func NewHandler(mailService service.MailService) *Handler {
+	return &Handler{service: mailService}
 }
 
 func (h *Handler) HandleGetEmailForm() func(w http.ResponseWriter, r *http.Request) {
@@ -30,19 +29,22 @@ func (h *Handler) HandleGetEmailForm() func(w http.ResponseWriter, r *http.Reque
 
 func (h *Handler) HandlePostEmailSend() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := h.service.Send()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		err = r.ParseForm()
+		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
-		email := r.FormValue("email")
+		mail := service.MailDTO{
+			Sender:     "Pawel.zapasnik@visionary-consulting.pl",
+			Recipients: []string{r.PostFormValue("to")},
+			Subject:    r.PostFormValue("subject"),
+			Body:       r.PostFormValue("message"),
+		}
 
-		slog.Info("parsing form", "r.Form", r.Form, "email", email)
+		err = h.service.Send(mail)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		t := templates.Root(true)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

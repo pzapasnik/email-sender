@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	emailhandler "github.com/pzapasnik/email-sender/internal/handler/email"
-	emailservice "github.com/pzapasnik/email-sender/internal/service/email"
+	mailhandler "github.com/pzapasnik/email-sender/internal/handler/mail"
+	mailsmtpservice "github.com/pzapasnik/email-sender/internal/service/mail/smtp"
+	mailstdoutservice "github.com/pzapasnik/email-sender/internal/service/mail/stdout"
 )
 
 func main() {
@@ -28,11 +29,12 @@ func run(_ context.Context) error {
 
 	fs := http.FileServer(http.Dir("web"))
 
-	emailHandler := emailhandler.NewHandler(emailservice.NewService())
+	_ = mailhandler.NewHandler(mailsmtpservice.NewService())
+	mailHandler := mailhandler.NewHandler(mailstdoutservice.NewService())
 
 	mux.Handle("/static/", fs)
-	mux.HandleFunc("/", emailHandler.HandleGetEmailForm())
-	mux.HandleFunc("/send", emailHandler.HandlePostEmailSend())
+	mux.HandleFunc("/mail", mailHandler.HandleGetEmailForm())
+	mux.HandleFunc("/mail-send", mailHandler.HandlePostEmailSend())
 
 	//TODO: add custom server timeouts and other settings
 	server := &http.Server{
