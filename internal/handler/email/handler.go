@@ -4,13 +4,21 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/pzapasnik/email-sender/internal/service/email"
 	"github.com/pzapasnik/email-sender/web/templates"
 )
 
-func GetRootHandler() func(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+	service *email.Service
+}
+
+func NewHandler(emailService *email.Service) *Handler {
+	return &Handler{service: emailService}
+}
+
+func (h *Handler) HandleGetEmailForm() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := templates.Root(false)
-
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 		if err := t.Render(r.Context(), w); err != nil {
@@ -20,9 +28,14 @@ func GetRootHandler() func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func PostSendHandler() func(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandlePostEmailSend() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := r.ParseForm()
+		err := h.service.Send()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		err = r.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
