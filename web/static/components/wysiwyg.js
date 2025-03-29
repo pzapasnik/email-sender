@@ -22,6 +22,9 @@ const unorderedListIconPath = new URL(
   import.meta.url,
 );
 
+const outdentIconPath = new URL("./icons/outdent.svg", import.meta.url).href;
+const indentIconPath = new URL("./icons/indent.svg", import.meta.url).href;
+
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
@@ -96,17 +99,17 @@ template.innerHTML = `
     </button>
 
     <div class="menu">
-      <button class="button" part="button" data-action="justifyLeft" data-tag-name="div" title="Justify left">
+      <button class="button" part="button" data-action="justifyLeft" data-style="textAlign:left" title="Justify left">
         <img part="icon" src="${alignLeftIconPath}" alt="Left"/>
       </button>
       <div class="submenu">
-        <button class="button" part="button" data-action="justifyCenter" data-tag-name="div" title="Justify center">
+        <button class="button" part="button" data-action="justifyCenter" data-style="textAlign:center" title="Justify center">
           <img src="${alignCenterIconPath}" alt="Center"/>
         </button>
-        <button class="button" part="button" data-action="justifyRight" data-tag-name="div" title="Justify right">
+        <button class="button" part="button" data-action="justifyRight" data-style="textAlign:right" title="Justify right">
           <img src="${alignRightIconPath}" alt="Right"/>
         </button>
-        <button class="button" part="button" data-action="justifyFull" data-tag-name="div" title="Justify full">
+        <button class="button" part="button" data-action="justifyFull" data-style="textAlign:justify" title="Justify full">
           <img src="${alignJustifyIconPath}" alt="Full"/>
         </button>
       </div>
@@ -117,6 +120,12 @@ template.innerHTML = `
     </button>
     <button part="button" class="button" data-action="insertUnorderedList" data-tag-name="ul" title="Unordered list">
       <img src="${unorderedListIconPath}" alt="UL"/>
+    </button>
+    <button part="button" class="button" data-action="outdent"  title="Outdent">
+      <img src="${outdentIconPath}" alt="outdent"/>
+    </button>
+    <button part="button" class="button" data-action="indent"  title="Outdent">
+      <img src="${indentIconPath}" alt="indent"/>
     </button>
   </div>
   <slot id="wysiwyg-editor-message"class="message" name="message"></slot>
