@@ -12,9 +12,12 @@ templ Mail(send bool) {
 	<script type="module" src="/static/lib/tailwindcss@4.min.js"></script>
 	<script type="module" src="/static/components/wysiwyg.js" defer></script>
 </head>
-<style>
+<style type="text/tailwindcss">
 	wysiwyg-editor::part(toolbar) {
-		background-color: #4a5568;
+		 @apply hover:bg-red-100 flex bg-slate-500 rounded-t-sm border-b-2 border-gray-400 h-10;
+	}
+	wysiwyg-editor::part(button) {
+		 @apply h-full w-10;
 	}
 </style>
 
@@ -50,8 +53,7 @@ templ Mail(send bool) {
 						<label class="my-2" slot="label" for="message">
 							Wiadomość:
 						</label>
-						<div class="flex h-10 bg-slate-500" slot="toolbar"></div>
-						<textarea class="bg-slate-500 rounded-sm px-2 py-1 h-full"
+						<textarea class="bg-slate-500 rounded-b-sm px-2 py-1 h-full"
 							slot="message" name="message"
 							placeholder="Napisz coś..."></textarea>
 					</wysiwyg-editor>
