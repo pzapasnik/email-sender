@@ -26,6 +26,7 @@ const outdentIconPath = new URL("./icons/outdent.svg", import.meta.url).href;
 const indentIconPath = new URL("./icons/indent.svg", import.meta.url).href;
 
 const template = document.createElement("template");
+
 template.innerHTML = `
 <style>
   .container {
@@ -81,14 +82,20 @@ template.innerHTML = `
       }
     }
   }
+  .inner-textarea {
+    display: none;
+  }
+
 </style>
 <div class="container">
   <slot  name="label"></slot>
+  <!-- Toolbar -->
   <div class="toolbar" part="toolbar">
-    <button part="button" class="button" data-action="bold" data-tag-name="b" title="Bold">
+
+    <button part="button" class="button" data-action="bold" data-tag-name="b" title="Bold" onclick="this.getRootNode().host.transform(event)">
       <img height="full" width="full" src="${boldIconPath}" alt="B"/>
     </button>
-    <button part="button" class="button" data-action="italic" data-tag-name="i" title="Italic">
+    <button part="button" class="button" data-action="italic" data-tag-name="i" title="Italic" onclick="this.getRootNode().host.transform(event)">
       <img class="icon" src="${italicIconPath}" alt="I"/>
     </button>
     <button  part="button" class="button" data-action="underline" data-tag-name="u" title="Underline">
@@ -98,6 +105,7 @@ template.innerHTML = `
       <img src="${stricThroughIconPath}" alt="S"/>
     </button>
 
+    <!-- text justify menu -->
     <div class="menu">
       <button class="button" part="button" data-action="justifyLeft" data-style="textAlign:left" title="Justify left">
         <img part="icon" src="${alignLeftIconPath}" alt="Left"/>
@@ -128,15 +136,72 @@ template.innerHTML = `
       <img src="${indentIconPath}" alt="indent"/>
     </button>
   </div>
-  <slot id="wysiwyg-editor-message"class="message" name="message"></slot>
+
+  <!-- textarea -->
+  <div 
+    id="wysiwyg-editor-visual"
+    contenteditable="true"
+    part="textarea"
+    >
+  </div>
+  <textarea id="wysiwyg-editor-hidden" class="inner-textarea"></textarea>
 </div>
 `;
 
 class WYSIWYGEditor extends HTMLElement {
+  // declares web component as form associated
+  static formAssociated = true;
+
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
-    shadow.appendChild(template.content.cloneNode(true));
+    this.internals = this.attachInternals();
+
+    this.shadow = this.attachShadow({ mode: "open" });
+    this.shadow.appendChild(template.content.cloneNode(true));
+
+    this.textAreaName = "";
+    this.visualEditor = this.shadow.getElementById("wysiwyg-editor-visual");
+    this.hiddenEditor = this.shadow.getElementById("wysiwyg-editor-hidden");
+    // this.hiddenEditor.attachInternals()
+  }
+
+  connectedCallback() {
+    this.visualEditor.addEventListener("paste", (e) => {
+      e.preventDefault();
+      const text = e.clipboardData.getData("text/plain");
+      document.execCommand("insertHTML", false, text);
+    });
+
+    this.visualEditor.addEventListener("input", () => {
+      this.hiddenEditor.value = this.visualEditor.innerHTML;
+      this.internals.setFormValue(this.hiddenEditor.value);
+    });
+
+    this.visualEditor.addEventListener("blur", () => {
+      this.hiddenEditor.value = this.visualEditor.innerHTML;
+      this.internals.setFormValue(this.hiddenEditor.value);
+    });
+
+    this.hiddenEditor.name = this.textAreaName;
+  }
+
+  static get observedAttributes() {
+    return ["name"];
+  }
+
+  attributeChangedCallback(prop, oldValue, newValue) {
+    if (oldValue === newValue) return;
+    if (prop === "name") {
+      this.textAreaName = newValue;
+      this.hiddenEditor.name = this.textAreaName;
+    }
+  }
+
+  transform(e) {
+    const tagName = e.target.dataset.tagName;
+    const action = e.target.dataset.action;
+    const msgEl = this.shadow.getElementById("wysiwyg-editor-message");
+    document.execCommand(action, false);
   }
 }
 
