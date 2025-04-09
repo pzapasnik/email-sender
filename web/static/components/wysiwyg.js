@@ -40,6 +40,7 @@ template.innerHTML = `
     display: flex;
     flex-direction: row;
     position: relative;
+    justify-content: space-between;
   }
 
   .button {
