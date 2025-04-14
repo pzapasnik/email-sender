@@ -89,7 +89,7 @@ template.innerHTML = `
 
 </style>
 <div class="container">
-  <slot  name="label"></slot>
+  <slot id="wysiwyg-label" name="label"></slot>
   <!-- Toolbar -->
   <div class="toolbar" part="toolbar">
 
@@ -140,12 +140,15 @@ template.innerHTML = `
 
   <!-- textarea -->
   <div 
+    role="textbox"
+    aria-multiline="true"
+    aria-labelledby="wysiwyg-label"
+    aria-required="true"
     id="wysiwyg-editor-visual"
     contenteditable="true"
     part="textarea"
     >
   </div>
-  <textarea id="wysiwyg-editor-hidden" class="inner-textarea"></textarea>
 </div>
 `;
 
@@ -161,26 +164,22 @@ class WYSIWYGEditor extends HTMLElement {
     this.shadow.appendChild(template.content.cloneNode(true));
 
     this.textAreaName = "";
-    this.visualEditor = this.shadow.getElementById("wysiwyg-editor-visual");
-    this.hiddenEditor = this.shadow.getElementById("wysiwyg-editor-hidden");
-    // this.hiddenEditor.attachInternals()
+    this.editor = this.shadow.getElementById("wysiwyg-editor-visual");
   }
 
   connectedCallback() {
-    this.visualEditor.addEventListener("paste", (e) => {
+    this.editor.addEventListener("paste", (e) => {
       e.preventDefault();
       const text = e.clipboardData.getData("text/plain");
       document.execCommand("insertHTML", false, text);
     });
 
-    this.visualEditor.addEventListener("input", () => {
-      this.hiddenEditor.value = this.visualEditor.innerHTML;
-      this.internals.setFormValue(this.hiddenEditor.value);
+    this.editor.addEventListener("input", () => {
+      this.internals.setFormValue(this.editor.innerHTML);
     });
 
-    this.visualEditor.addEventListener("blur", () => {
-      this.hiddenEditor.value = this.visualEditor.innerHTML;
-      this.internals.setFormValue(this.hiddenEditor.value);
+    this.editor.addEventListener("blur", () => {
+      this.internals.setFormValue(this.editor.innerHTML);
     });
 
     this.hiddenEditor.name = this.textAreaName;
@@ -194,6 +193,7 @@ class WYSIWYGEditor extends HTMLElement {
     if (oldValue === newValue) return;
     if (prop === "name") {
       this.textAreaName = newValue;
+      this.editor.name = this.textAreaName;
       this.hiddenEditor.name = this.textAreaName;
     }
   }
